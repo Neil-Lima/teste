@@ -1,32 +1,55 @@
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
 const cors = require('cors');
+const { Pool } = require('pg');
 
 const app = express();
+const port = process.env.PORT || 3000;
+
+// Enable CORS for all routes
 app.use(cors());
 app.use(express.json());
 
-const dbPath = path.resolve(__dirname, 'database.sqlite');
-const db = new sqlite3.Database(dbPath);
-
-db.serialize(() => {
-  db.run("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)");
+// PostgreSQL connection
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
-app.post('/api/users', (req, res) => {
+// Example route to fetch data from PostgreSQL
+app.get('/api/data', async (req, res) => {
+  try {
+    const client = await pool.connect();
+    const result = await client.query('SELECT * FROM your_table');
+    const data = result.rows;
+    client.release();
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Example route to add data to PostgreSQL
+app.post('/api/data', async (req, res) => {
   const { name } = req.body;
-  db.run("INSERT INTO users (name) VALUES (?)", [name], function(err) {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json({ id: this.lastID });
-  });
+  try {
+    const client = await pool.connect();
+    await client.query('INSERT INTO your_table (name) VALUES ($1)', [name]);
+    client.release();
+    res.status(201).json({ message: 'Data added successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
-app.get('/api/users', (req, res) => {
-  db.all("SELECT * FROM users", [], (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
   });
-});
+}
 
 module.exports = app;
