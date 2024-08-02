@@ -11,7 +11,7 @@ function App() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/data');
+      const response = await fetch('http://localhost:3001/api/data');
       const jsonData = await response.json();
       setData(jsonData);
     } catch (error) {
@@ -22,7 +22,7 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await fetch('http://localhost:3000/api/data', {
+      await fetch('http://localhost:3001/api/data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
