@@ -2,54 +2,56 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
-  const [name, setName] = useState('');
-  const [data, setData] = useState([]);
+  const [nome, setNome] = useState('');
+  const [financas, setFinancas] = useState([]);
 
   useEffect(() => {
-    fetchData();
+    buscarFinancas();
   }, []);
 
-  const fetchData = async () => {
+  const buscarFinancas = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/data');
-      const jsonData = await response.json();
-      setData(jsonData);
-    } catch (error) {
-      console.error('Error fetching data:', error);
+      const resposta = await fetch('http://localhost:5000/financas');
+      const dados = await resposta.json();
+      setFinancas(dados);
+    } catch (erro) {
+      console.error('Erro ao buscar financas:', erro);
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (evento) => {
+    evento.preventDefault();
     try {
-      await fetch('http://localhost:3001/api/data', {
+      await fetch('http://localhost:5000/financas', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ nome }),
       });
-      setName('');
-      fetchData();
-    } catch (error) {
-      console.error('Error submitting data:', error);
+      setNome('');
+      buscarFinancas();
+    } catch (erro) {
+      console.error('Erro ao enviar financa:', erro);
     }
   };
 
   return (
     <>
-      <h1>Nome</h1>
+      <h1>Gerenciador de Finanças</h1>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+          placeholder="Nome do item financeiro"
         />
-        <button type="submit">Submit</button>
+        <button type="submit">Adicionar Item</button>
       </form>
+      <h2>Lista de Itens Financeiros:</h2>
       <ul>
-        {data.map((item, index) => (
-          <li key={index}>{item.name}</li>
+        {financas.map((item) => (
+          <li key={item._id}>{item.nome}</li>
         ))}
       </ul>
     </>
