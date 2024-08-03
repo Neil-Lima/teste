@@ -6,7 +6,7 @@ function App() {
   const [nome, setNome] = useState('');
   const [nomes, setNomes] = useState([]);
 
-  const baseURL = 'https://teste-sand-five.vercel.app/api/usuarios';
+  const baseURL = 'https://teste-sand-five.vercel.app';
 
   useEffect(() => {
     fetchNomes();
@@ -14,7 +14,7 @@ function App() {
 
   const fetchNomes = async () => {
     try {
-      const response = await axios.get(baseURL);
+      const response = await axios.get(`${baseURL}/api/usuarios`);
       if (Array.isArray(response.data)) {
         setNomes(response.data);
       } else {
@@ -30,7 +30,7 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(baseURL, { nome });
+      await axios.post(`${baseURL}/api/usuarios`, { nome });
       setNome('');
       fetchNomes();
     } catch (error) {
