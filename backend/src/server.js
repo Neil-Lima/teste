@@ -1,5 +1,5 @@
 require('dotenv').config();
-const express = require('../../frontend/node_modules/@types/express');
+const express = require('express');
 const cors = require('cors');
 const connectDatabase = require('./config/database');
 const usuarioRoutes = require('./routes/usuario.routes');
