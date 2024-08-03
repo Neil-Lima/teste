@@ -1,60 +1,53 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './App.css';
 
 function App() {
   const [nome, setNome] = useState('');
-  const [financas, setFinancas] = useState([]);
+  const [nomes, setNomes] = useState([]);
 
   useEffect(() => {
-    buscarFinancas();
+    fetchNomes();
   }, []);
 
-  const buscarFinancas = async () => {
+  const fetchNomes = async () => {
     try {
-      const resposta = await fetch('http://localhost:5000/financas');
-      const dados = await resposta.json();
-      setFinancas(dados);
-    } catch (erro) {
-      console.error('Erro ao buscar financas:', erro);
+      const response = await axios.get('http://localhost:5000/api/usuarios');
+      setNomes(response.data);
+    } catch (error) {
+      console.error('Error fetching names:', error);
     }
   };
 
-  const handleSubmit = async (evento) => {
-    evento.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      await fetch('http://localhost:5000/financas', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ nome }),
-      });
+      await axios.post('http://localhost:5000/api/usuarios', { nome });
       setNome('');
-      buscarFinancas();
-    } catch (erro) {
-      console.error('Erro ao enviar financa:', erro);
+      fetchNomes();
+    } catch (error) {
+      console.error('Error adding name:', error);
     }
   };
 
   return (
-    <>
-      <h1>Gerenciador de Finanças</h1>
+    <div className="App">
+      <h1>Nome</h1>
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-          placeholder="Nome do item financeiro"
+        <input 
+          type="text" 
+          value={nome} 
+          onChange={(e) => setNome(e.target.value)} 
+          placeholder="Digite um nome"
         />
-        <button type="submit">Adicionar Item</button>
+        <button type="submit">Adicionar</button>
       </form>
-      <h2>Lista de Itens Financeiros:</h2>
       <ul>
-        {financas.map((item) => (
+        {nomes.map((item) => (
           <li key={item._id}>{item.nome}</li>
         ))}
       </ul>
-    </>
+    </div>
   );
 }
 
