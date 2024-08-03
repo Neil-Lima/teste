@@ -6,27 +6,29 @@ function App() {
   const [nome, setNome] = useState('');
   const [nomes, setNomes] = useState([]);
 
+  const baseURL = 'https://teste-sand-five.vercel.app/api/usuarios';
+
   useEffect(() => {
     fetchNomes();
   }, []);
 
   const fetchNomes = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/usuarios');
+      const response = await axios.get(baseURL);
       setNomes(response.data);
     } catch (error) {
-      console.error('Error fetching names:', error);
+      console.error('Erro ao buscar nomes:', error);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/usuarios', { nome });
+      await axios.post(baseURL, { nome });
       setNome('');
       fetchNomes();
     } catch (error) {
-      console.error('Error adding name:', error);
+      console.error('Erro ao adicionar nome:', error);
     }
   };
 
