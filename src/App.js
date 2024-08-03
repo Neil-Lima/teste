@@ -6,35 +6,27 @@ function App() {
   const [nome, setNome] = useState('');
   const [nomes, setNomes] = useState([]);
 
-  const baseURL = 'https://teste-sand-five.vercel.app';
-
   useEffect(() => {
     fetchNomes();
   }, []);
 
   const fetchNomes = async () => {
     try {
-      const response = await axios.get(`${baseURL}/api/usuarios`);
-      if (Array.isArray(response.data)) {
-        setNomes(response.data);
-      } else {
-        console.error('Resposta da API não é um array:', response.data);
-        setNomes([]);
-      }
+      const response = await axios.get('http://localhost:5000/api/usuarios');
+      setNomes(response.data);
     } catch (error) {
-      console.error('Erro ao buscar nomes:', error);
-      setNomes([]);
+      console.error('Error fetching names:', error);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${baseURL}/api/usuarios`, { nome });
+      await axios.post('http://localhost:5000/api/usuarios', { nome });
       setNome('');
       fetchNomes();
     } catch (error) {
-      console.error('Erro ao adicionar nome:', error);
+      console.error('Error adding name:', error);
     }
   };
 
@@ -51,8 +43,8 @@ function App() {
         <button type="submit">Adicionar</button>
       </form>
       <ul>
-        {Array.isArray(nomes) && nomes.map((item) => (
-          <li key={item._id}>{item.nome}</li>
+        {nomes.map((item, index) => (
+          <li key={index}>{item.nome}</li>
         ))}
       </ul>
     </div>
