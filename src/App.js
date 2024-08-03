@@ -15,9 +15,15 @@ function App() {
   const fetchNomes = async () => {
     try {
       const response = await axios.get(baseURL);
-      setNomes(response.data);
+      if (Array.isArray(response.data)) {
+        setNomes(response.data);
+      } else {
+        console.error('Resposta da API não é um array:', response.data);
+        setNomes([]);
+      }
     } catch (error) {
       console.error('Erro ao buscar nomes:', error);
+      setNomes([]);
     }
   };
 
@@ -45,7 +51,7 @@ function App() {
         <button type="submit">Adicionar</button>
       </form>
       <ul>
-        {nomes.map((item) => (
+        {Array.isArray(nomes) && nomes.map((item) => (
           <li key={item._id}>{item.nome}</li>
         ))}
       </ul>
