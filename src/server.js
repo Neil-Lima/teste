@@ -8,7 +8,13 @@ const app = express();
 
 connectDatabase();
 
-app.use(cors());
+// Configuração do CORS
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://seu-frontend-no-netlify.netlify.app'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
 app.use('/api/usuarios', usuarioRoutes);
