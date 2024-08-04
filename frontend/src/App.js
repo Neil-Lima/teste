@@ -1,55 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function App() {
-  const [usuarios, setUsuarios] = useState([]);
-  const [nome, setNome] = useState('');
-  const [erro, setErro] = useState('');
+const API_URL = 'https://backend-teste-seven.vercel.app';
 
-  const API_URL = 'https://teste-8r54.onrender.com/api/usuarios';
+function App() {
+  const [nome, setNome] = useState('');
+  const [usuarios, setUsuarios] = useState([]);
 
   useEffect(() => {
-    listarUsuarios();
+    fetchUsuarios();
   }, []);
 
-  const listarUsuarios = async () => {
+  const fetchUsuarios = async () => {
     try {
-      const response = await axios.get(API_URL);
+      const response = await axios.get(`${API_URL}/api/usuarios`);
       setUsuarios(response.data);
-      setErro('');
     } catch (error) {
-      console.error('Erro ao listar usuários:', error);
-      setErro('Não foi possível carregar a lista de usuários. Tente novamente mais tarde.');
+      console.error('Erro ao buscar usuários:', error);
     }
   };
 
-  const adicionarUsuario = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(API_URL, { nome });
+      await axios.post(`${API_URL}/api/usuarios`, { nome });
       setNome('');
-      listarUsuarios();
-      setErro('');
+      fetchUsuarios();
     } catch (error) {
       console.error('Erro ao adicionar usuário:', error);
-      setErro('Não foi possível adicionar o usuário. Tente novamente mais tarde.');
     }
   };
 
   return (
     <div>
-      <h1>Gerenciamento de Usuários</h1>
-      {erro && <p style={{color: 'red'}}>{erro}</p>}
-      <form onSubmit={adicionarUsuario}>
+      <h1>Adicionar Nome</h1>
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
           value={nome}
           onChange={(e) => setNome(e.target.value)}
-          placeholder="Nome"
-          required
+          placeholder="Digite um nome"
         />
-        <button type="submit">Adicionar Usuário</button>
+        <button type="submit">Adicionar</button>
       </form>
+
+      <h2>Lista de Nomes</h2>
       <ul>
         {usuarios.map((usuario) => (
           <li key={usuario._id}>{usuario.nome}</li>
