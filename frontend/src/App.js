@@ -44,7 +44,7 @@ function App() {
         <button type="submit">Adicionar</button>
       </form>
 
-      <h2>Lista de Nomes</h2>
+      <h2>Lista de Nomesj</h2>
       <ul>
         {usuarios.map((usuario) => (
           <li key={usuario._id}>{usuario.nome}</li>
